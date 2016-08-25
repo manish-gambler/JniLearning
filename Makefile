@@ -9,22 +9,23 @@ CPATH=-I /usr/lib/jvm/java-6-openjdk-i386/include/ -I /usr/lib/jvm/java-6-openjd
 
 #all: libDemojni.so
 
-libDemojni.so:$(BIN_PATH)/demojni.o
+libDemojni.so:demojni.o
 	g++ -shared $(BIN_PATH)/demojni.o -o libs/libDemojni.so	
 
-demojni.o: ndk/demojni.cpp ndk/include/demojni.h
+demojni.o: ndk/demojni.cpp demojni.h
 	mkdir -p gen/bin
 	g++ -fPIC $(CPATH) -c ndk/demojni.cpp -o gen/bin/demojni.o
 
 demojni.h: Hello.class	
-	javah -classpath $(CLASSPATH) -o $(HEADER_FILE)/Hello.h com.sasken.demo.Hello
-	cp $(HEADER_FILE)/Hello.h ndk/include
+	javah -classpath $(CLASSPATH) -o $(HEADER_FILE)/demojni.h com.sasken.demo.Hello
+	cp $(HEADER_FILE)/demojni.h ndk/include
+	rm $(HEADER_FILE)/demojni.h
 
 Hello.class : $(JAVA_SRC_PATH)/Hello.java
 	mkdir -p gen/classes
 	javac -d gen/classes/ $(JAVA_SRC_PATH)/Hello.java
 clean:
-	rm Hello.class demojni.o libDemojni.so
+	rm -rf gen/classes/* gen/bin/* libs/libDemojni.so ndk/include/demojni.h
 
 
 
